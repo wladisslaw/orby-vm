@@ -2,6 +2,8 @@ import zipfile
 import json
 from pathlib import Path
 
+from .sandbox import create_sandbox
+
 class OrbyApp:
     def __init__(self, orby_path):
         self.path = Path(orby_path)
@@ -20,15 +22,14 @@ class OrbyApp:
                 raise ValueError(f"Манифест не содержит поле: {field}")
 
     def run(self):
-        """Запускает приложение."""
-        # Временная реализация без изоляции
+        sandbox_env = create_sandbox(self.manifest["permissions"])
         with zipfile.ZipFile(self.path, 'r') as zipf:
             zipf.extractall("temp_orby_app")
         
         entry_path = Path("temp_orby_app") / self.manifest["entry_point"]
         with open(entry_path, "r") as f:
             code = compile(f.read(), entry_path, 'exec')
-            exec(code, {"__name__": "__main__"})
+            exec(code, sandbox_env)
 
 def load_orby_app(orby_path):
     return OrbyApp(orby_path)
