@@ -1,0 +1,12 @@
+[project]
+name = "orby-vm"
+version = "0.1.0"
+description = "Orby Virtual Machine"
+
+dependencies = [
+    "click>=8.0",      # Для CLI
+    "pyyaml>=6.0",     # Для манифеста
+]
+
+[project.scripts]
+orbyvm = "orbyvm.cli:main"
